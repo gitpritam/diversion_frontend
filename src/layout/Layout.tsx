@@ -1,10 +1,18 @@
+/**
+ * Main Layout Component
+ * Contains the split-panel layout with chat and flow visualization
+ */
+
 import { useState } from "react";
-import ChatPanel from "./ChatPanel";
-import FlowPanel from "./FlowPanel";
+import { ChatPanel, FlowPanel } from "../components";
+import type { ArchitectureData } from "../@types";
 
 export default function Layout() {
   const [chatWidth, setChatWidth] = useState(360);
   const [isDragging, setIsDragging] = useState(false);
+  const [architectureData, setArchitectureData] =
+    useState<ArchitectureData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleMouseDown = () => {
     setIsDragging(true);
@@ -31,7 +39,11 @@ export default function Layout() {
         className="flex flex-col h-full shrink-0 overflow-hidden"
         style={{ width: chatWidth }}
       >
-        <ChatPanel />
+        <ChatPanel
+          onSendMessage={setArchitectureData}
+          isLoading={isLoading}
+          onLoadingChange={setIsLoading}
+        />
       </div>
 
       {/* Resize Handle */}
@@ -45,7 +57,7 @@ export default function Layout() {
 
       {/* Right — Flow Panel */}
       <div className="flex-1 h-full overflow-hidden">
-        <FlowPanel />
+        <FlowPanel architectureData={architectureData} isLoading={isLoading} />
       </div>
     </div>
   );
