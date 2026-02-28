@@ -8,7 +8,7 @@ import type { ArchitectureData, IdeaApiResponse } from "../@types";
  */
 export const sendIdea = async (query: string): Promise<ArchitectureData> => {
   const response = await axiosInstance.post<IdeaApiResponse>("/idea", {
-    query,
+    idea: query,
   });
   const { projectName, architecture, cloudEstimation } = response.data.data;
   return {

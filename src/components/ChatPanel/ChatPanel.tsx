@@ -4,10 +4,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Sparkles, SendHorizontal, Loader2 } from "lucide-react";
+import { UserButton } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 import { sendIdea } from "../../api";
 import type { Message, ChatPanelProps } from "../../@types";
 
@@ -73,7 +73,7 @@ export default function ChatPanel({
         id: Date.now() + 1,
         role: "assistant",
         content:
-          "❌ Something went wrong. Please try again with a different description.",
+          "❌ Write a system design or product idea in the input box and I'll generate the architecture diagram for you. If you have already sent an idea, please try again.",
         timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
@@ -124,15 +124,13 @@ export default function ChatPanel({
               </div>
             </div>
           </div>
-          <Badge variant="outline" className="shrink-0 font-medium">
-            GPT-4o
-          </Badge>
+          <UserButton afterSignOutUrl="/" />
         </div>
       </div>
 
       {/* ── Messages ─────────────────────────────────────── */}
-      <ScrollArea className="flex-1 px-4">
-        <div className="py-4 space-y-4">
+      <ScrollArea className="flex-1 overflow-hidden">
+        <div className="px-4 py-4 space-y-4">
           {messages.map((msg) => (
             <div key={msg.id} className="flex gap-3 group">
               {/* Avatar */}

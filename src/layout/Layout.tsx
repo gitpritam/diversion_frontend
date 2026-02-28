@@ -6,8 +6,15 @@
 import { useState } from "react";
 import { ChatPanel, FlowPanel } from "../components";
 import type { ArchitectureData } from "../@types";
+import { useClerkAxios } from "@/hooks/useClerkAxios";
+import { useSyncUser } from "@/hooks/useSyncUser";
 
 export default function Layout() {
+  // Attach Clerk JWT to every axios request made from this session
+  useClerkAxios();
+  // Sync Clerk user to MongoDB on first load
+  useSyncUser();
+
   const [chatWidth, setChatWidth] = useState(360);
   const [isDragging, setIsDragging] = useState(false);
   const [architectureData, setArchitectureData] =
