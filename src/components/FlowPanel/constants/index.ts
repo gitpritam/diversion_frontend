@@ -4,67 +4,82 @@
  */
 
 import type { Node, Edge } from "@xyflow/react";
+import type { IconType } from "react-icons";
+import { FaReact } from "react-icons/fa";
+import { FaCloud } from "react-icons/fa";
+import { FaServer } from "react-icons/fa";
+import { FaDatabase } from "react-icons/fa";
+import { FaBolt } from "react-icons/fa";
+import { FaStream } from "react-icons/fa";
+import { FaHdd } from "react-icons/fa";
+import { FaGlobe } from "react-icons/fa";
 import type { NodeType } from "../types";
 
 export const TYPE_STYLES: Record<
   NodeType,
-  { bg: string; border: string; badge: string; badgeText: string; icon: string }
+  {
+    bg: string;
+    border: string;
+    badge: string;
+    badgeText: string;
+    icon: IconType;
+  }
 > = {
   frontend: {
     bg: "#1e1b4b",
     border: "#4f46e5",
     badge: "#312e81",
     badgeText: "#a5b4fc",
-    icon: "🖥️",
+    icon: FaReact,
   },
   cloud: {
     bg: "#1c3150",
     border: "#3b82f6",
     badge: "#1e3a5f",
     badgeText: "#93c5fd",
-    icon: "☁️",
+    icon: FaCloud,
   },
   backend: {
     bg: "#1a2e1a",
     border: "#22c55e",
     badge: "#14532d",
     badgeText: "#86efac",
-    icon: "⚙️",
+    icon: FaServer,
   },
   database: {
     bg: "#2d1b1b",
     border: "#ef4444",
     badge: "#450a0a",
     badgeText: "#fca5a5",
-    icon: "🗄️",
+    icon: FaDatabase,
   },
   cache: {
     bg: "#2d2010",
     border: "#f97316",
     badge: "#431407",
     badgeText: "#fdba74",
-    icon: "⚡",
+    icon: FaBolt,
   },
   queue: {
     bg: "#1f1a2e",
     border: "#a855f7",
     badge: "#3b0764",
     badgeText: "#d8b4fe",
-    icon: "📨",
+    icon: FaStream,
   },
   storage: {
     bg: "#1a2535",
     border: "#06b6d4",
     badge: "#083344",
     badgeText: "#67e8f9",
-    icon: "💾",
+    icon: FaHdd,
   },
   external: {
     bg: "#1f1f1f",
     border: "#6b7280",
     badge: "#111827",
     badgeText: "#d1d5db",
-    icon: "🌐",
+    icon: FaGlobe,
   },
 };
 

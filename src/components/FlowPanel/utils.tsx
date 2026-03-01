@@ -4,16 +4,161 @@
  */
 
 import { memo } from "react";
+import { Handle, Position, type NodeProps } from "@xyflow/react";
+import type { IconType } from "react-icons";
 import {
-  Handle,
-  Position,
-  type Node,
-  type Edge,
-  type NodeProps,
-} from "@xyflow/react";
-import type { ArchitectureData } from "../../@types";
-import { EDGE_COLORS, TYPE_STYLES } from "./constants";
+  SiReact,
+  SiNodedotjs,
+  SiGo,
+  SiFlutter,
+  SiPostgresql,
+  SiMongodb,
+  SiMysql,
+  SiRedis,
+  SiApachekafka,
+  SiRabbitmq,
+  SiElasticsearch,
+  SiAmazons3,
+  SiFirebase,
+  SiApple,
+  SiGooglecloud,
+  SiDocker,
+  SiKubernetes,
+  SiNginx,
+  SiCloudflare,
+  SiGraphql,
+  SiSupabase,
+  SiVercel,
+  SiNetlify,
+  SiPython,
+  SiDjango,
+  SiSpring,
+} from "react-icons/si";
+import {
+  FaAws,
+  FaMobileAlt,
+  FaLock,
+  FaBell,
+  FaBalanceScale,
+  FaUser,
+  FaGlobe,
+  FaDatabase,
+} from "react-icons/fa";
+import { TbApi } from "react-icons/tb";
+import { TYPE_STYLES } from "./constants";
 import type { NodeType } from "./types";
+
+// ── Service icon lookup ────────────────────────────────────────────────────────
+interface ServiceEntry {
+  keywords: string[];
+  icon: IconType;
+  color: string;
+}
+
+const SERVICE_ICON_MAP: ServiceEntry[] = [
+  // Frontend / clients
+  { keywords: ["flutter"], icon: SiFlutter, color: "#54C5F8" },
+  {
+    keywords: ["react native", "reactnative"],
+    icon: SiReact,
+    color: "#61DAFB",
+  },
+  { keywords: ["react"], icon: SiReact, color: "#61DAFB" },
+  { keywords: ["vercel"], icon: SiVercel, color: "#E5E5E5" },
+  { keywords: ["netlify"], icon: SiNetlify, color: "#00C7B7" },
+  { keywords: ["mobile"], icon: FaMobileAlt, color: "#94a3b8" },
+
+  // Networking / infra
+  { keywords: ["cloudfront"], icon: SiCloudflare, color: "#F38020" },
+  { keywords: ["cloudflare"], icon: SiCloudflare, color: "#F38020" },
+  { keywords: ["nginx"], icon: SiNginx, color: "#009639" },
+  { keywords: ["api gateway", "apigateway"], icon: TbApi, color: "#a78bfa" },
+  {
+    keywords: ["alb", "load balancer", "nlb"],
+    icon: FaBalanceScale,
+    color: "#facc15",
+  },
+
+  // Container / orchestration
+  { keywords: ["kubernetes", "k8s"], icon: SiKubernetes, color: "#326CE5" },
+  { keywords: ["docker"], icon: SiDocker, color: "#2496ED" },
+
+  // Backend runtimes / frameworks
+  {
+    keywords: ["node.js", "nodejs", "node"],
+    icon: SiNodedotjs,
+    color: "#339933",
+  },
+  { keywords: ["golang", "go ("], icon: SiGo, color: "#00ADD8" },
+  { keywords: ["python"], icon: SiPython, color: "#3776AB" },
+  { keywords: ["django"], icon: SiDjango, color: "#092E20" },
+  { keywords: ["spring"], icon: SiSpring, color: "#6DB33F" },
+  { keywords: ["graphql"], icon: SiGraphql, color: "#E10098" },
+
+  // Auth
+  { keywords: ["auth", "jwt", "oauth"], icon: FaLock, color: "#f59e0b" },
+
+  // Databases
+  {
+    keywords: ["postgresql", "postgres"],
+    icon: SiPostgresql,
+    color: "#4169E1",
+  },
+  { keywords: ["dynamodb"], icon: FaAws, color: "#FF9900" },
+  { keywords: ["mongodb", "mongo"], icon: SiMongodb, color: "#47A248" },
+  { keywords: ["mysql"], icon: SiMysql, color: "#4479A1" },
+  { keywords: ["cassandra"], icon: FaDatabase, color: "#1287B1" },
+  {
+    keywords: ["elasticsearch", "elastic"],
+    icon: SiElasticsearch,
+    color: "#FED10A",
+  },
+  { keywords: ["supabase"], icon: SiSupabase, color: "#3FCF8E" },
+
+  // Cache
+  { keywords: ["redis"], icon: SiRedis, color: "#DC382D" },
+
+  // Queues
+  { keywords: ["kafka"], icon: SiApachekafka, color: "#868686" },
+  { keywords: ["rabbitmq", "rabbit"], icon: SiRabbitmq, color: "#FF6600" },
+  { keywords: ["sqs"], icon: FaAws, color: "#FF9900" },
+
+  // Storage
+  { keywords: ["s3"], icon: SiAmazons3, color: "#FF9900" },
+  {
+    keywords: ["gcs", "google cloud storage"],
+    icon: SiGooglecloud,
+    color: "#4285F4",
+  },
+
+  // Providers
+  { keywords: ["firebase", "fcm"], icon: SiFirebase, color: "#FFCA28" },
+  { keywords: ["apple", "apns"], icon: SiApple, color: "#A2AAAD" },
+  { keywords: ["aws", "amazon"], icon: FaAws, color: "#FF9900" },
+  { keywords: ["google"], icon: SiGooglecloud, color: "#4285F4" },
+
+  // Generic
+  {
+    keywords: ["push notification", "notification"],
+    icon: FaBell,
+    color: "#f472b6",
+  },
+  { keywords: ["user"], icon: FaUser, color: "#94a3b8" },
+  { keywords: ["external"], icon: FaGlobe, color: "#6b7280" },
+];
+
+function getServiceIcon(
+  service: string,
+  provider: string,
+): { icon: IconType; color: string } | null {
+  const text = `${service} ${provider}`.toLowerCase();
+  for (const entry of SERVICE_ICON_MAP) {
+    if (entry.keywords.some((kw) => text.includes(kw.toLowerCase()))) {
+      return { icon: entry.icon, color: entry.color };
+    }
+  }
+  return null;
+}
 
 /**
  * Custom Architecture Node Component
@@ -21,6 +166,13 @@ import type { NodeType } from "./types";
 export const ArchNode = memo(({ data }: NodeProps) => {
   const nodeType = (data.nodeType as NodeType) ?? "backend";
   const s = TYPE_STYLES[nodeType];
+
+  const serviceMatch = getServiceIcon(
+    (data.service as string) ?? "",
+    (data.provider as string) ?? "",
+  );
+  const IconComponent = serviceMatch?.icon ?? s.icon;
+  const iconColor = serviceMatch?.color ?? s.border;
 
   return (
     <div
@@ -69,7 +221,7 @@ export const ArchNode = memo(({ data }: NodeProps) => {
           marginBottom: 7,
         }}
       >
-        <span style={{ fontSize: 15 }}>{s.icon}</span>
+        <IconComponent size={16} color={iconColor} style={{ flexShrink: 0 }} />
         <span
           style={{
             color: "#f1f5f9",
@@ -126,88 +278,3 @@ export const ArchNode = memo(({ data }: NodeProps) => {
 });
 
 ArchNode.displayName = "ArchNode";
-
-export const nodeTypes = { archNode: ArchNode };
-
-/**
- * Generate React Flow nodes and edges from architecture data
- */
-export const generateNodesAndEdges = (
-  data: ArchitectureData | null,
-): { nodes: Node[]; edges: Edge[] } => {
-  if (!data) {
-    return { nodes: [], edges: [] };
-  }
-
-  // Type mapping for styling
-  const typeMap: Record<string, NodeType> = {};
-  data.nodes.forEach((n) => {
-    typeMap[n.id] = (n.type as NodeType) || "backend";
-  });
-
-  // Generate positions based on layer
-  const typePositions: Record<string, { x: number; y: number }[]> = {};
-  const nodesByType: Record<string, string[]> = {};
-
-  // Group nodes by type
-  data.nodes.forEach((n) => {
-    const type = typeMap[n.id];
-    if (!nodesByType[type]) nodesByType[type] = [];
-    nodesByType[type].push(n.id);
-  });
-
-  // Layer y-positions
-  const typeLayerY: Record<NodeType, number> = {
-    frontend: 0,
-    cloud: 150,
-    backend: 350,
-    database: 550,
-    cache: 550,
-    queue: 550,
-    storage: 550,
-    external: 750,
-  };
-
-  // Layout nodes within each type
-  Object.entries(nodesByType).forEach(([type, ids]) => {
-    const y = typeLayerY[type as NodeType] ?? 300;
-    const spacing = 220;
-    const totalWidth = (ids.length - 1) * spacing;
-    const startX = -totalWidth / 2;
-
-    ids.forEach((id, idx) => {
-      if (!typePositions[id]) typePositions[id] = [];
-      typePositions[id].push({
-        x: startX + idx * spacing,
-        y,
-      });
-    });
-  });
-
-  // Create nodes
-  const newNodes: Node[] = data.nodes.map((n) => ({
-    id: n.id,
-    type: "archNode",
-    position: typePositions[n.id]?.[0] ?? { x: 0, y: 0 },
-    data: {
-      label: n.label,
-      nodeType: typeMap[n.id],
-      service: n.service,
-      provider: n.provider,
-    },
-  }));
-
-  // Create edges
-  const newEdges: Edge[] = data.edges.map((e, i) => ({
-    id: `e-${i}`,
-    source: e.source,
-    target: e.target,
-    animated: true,
-    style: {
-      stroke: EDGE_COLORS[typeMap[e.source]] ?? "#6366f1",
-      strokeWidth: 1.5,
-    },
-  }));
-
-  return { nodes: newNodes, edges: newEdges };
-};
