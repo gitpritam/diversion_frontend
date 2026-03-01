@@ -27,6 +27,13 @@ import { Separator } from "@/components/ui/separator";
 import { generateNodesAndEdges, nodeTypes } from "./utils";
 import { cloudEstimation, costColors, TYPE_STYLES } from "./constants";
 import type { NodeType, FlowPanelProps } from "./types";
+import useNodeRepulsion from "@/hooks/useNodeRepulsion/useNodeRepulsion";
+
+/** Rendered inside <ReactFlow> so it has access to the ReactFlow context */
+function RepulsionEffect() {
+  useNodeRepulsion(180, 1, 300);
+  return null;
+}
 
 // ─── Inner stateful canvas ────────────────────────────────────────────────────
 // Extracted so that changing `key` remounts it, cleanly re-initialising state
@@ -76,6 +83,7 @@ function FlowCanvas({
       proOptions={{ hideAttribution: true }}
     >
       <Background variant={BackgroundVariant.Dots} gap={22} size={1} />
+      <RepulsionEffect />
       <Controls />
       <MiniMap
         nodeColor={(n) => {

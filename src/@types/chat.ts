@@ -2,6 +2,8 @@
  * Chat and Message Types
  */
 
+import type { ArchitectureData } from "./architecture";
+
 export interface Message {
   id: number;
   role: "user" | "assistant";

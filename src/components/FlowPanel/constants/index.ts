@@ -4,7 +4,7 @@
  */
 
 import type { Node, Edge } from "@xyflow/react";
-import type { NodeType } from "./types";
+import type { NodeType } from "../types";
 
 export const TYPE_STYLES: Record<
   NodeType,

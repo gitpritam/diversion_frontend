@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
+import logo from "@/assets/logo.png";
 
 const DataCenterSVG = () => (
   <svg
@@ -450,7 +451,10 @@ export default function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center px-10 py-16 bg-background">
+    <div className="min-h-screen w-full flex flex-col items-center px-10 py-16 bg-background">
+      <div className="w-full max-w-6xl mb-10">
+        <img src={logo} alt="Logo" className="h-10 w-auto" />
+      </div>
       <div className="flex items-center justify-between w-full max-w-6xl gap-16">
         {/* Left Content */}
         <div className="flex-1 flex flex-col gap-7">
